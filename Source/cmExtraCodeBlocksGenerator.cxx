@@ -315,7 +315,7 @@ void cmExtraCodeBlocksGenerator
         "   <FileVersion major=\"1\" minor=\"6\" />\n"
         "   <Project>\n"
         "      <Option title=\"" << mf->GetProjectName()<<"\" />\n"
-        "      <Option makefile_is_custom=\"1\" />\n"
+        "      <Option makefile_is_custom=\"0\" />\n"
         "      <Option compiler=\"" << compiler << "\" />\n"
         "      "<<virtualFolders<<"\n"
         "      <Build>\n";
@@ -630,6 +630,39 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
         {
         cmXMLSafe safedef(di->c_str());
         fout <<"            <Add option=\"-D" << safedef.str() << "\" />\n";
+        }
+      }
+    const char* cflags = target->GetProperty("COMPILE_FLAGS");
+    if(cflags)
+      {
+          // Expand the list.
+      std::vector<std::string> flags;
+      cmSystemTools::ExpandListArgument(cflags, flags);
+      for(std::vector<std::string>::const_iterator fi = flags.begin();
+          fi != flags.end(); ++fi)
+        {
+        cmXMLSafe safeflag(fi->c_str());
+        fout <<"            <Add option=\"" << safeflag.str() << "\" />\n";
+        }
+      }
+
+    std::string sharedLibFlagsVar = "CMAKE_SHARED_LIBRARY_CXX_FLAGS";
+    if (this->GlobalGenerator->GetLanguageEnabled("CXX") == false)
+      {
+        sharedLibFlagsVar = "CMAKE_SHARED_LIBRARY_C_FLAGS";
+      }
+    const char* sldefs = target->GetMakefile()->GetSafeDefinition(
+                                             "CMAKE_SHARED_LIBRARY_CXX_FLAGS");
+    if(sldefs)
+      {
+      // Expand the list.
+      std::vector<std::string> defs;
+      cmSystemTools::ExpandListArgument(sldefs, defs);
+      for(std::vector<std::string>::const_iterator di = defs.begin();
+          di != defs.end(); ++di)
+        {
+        cmXMLSafe safedef(di->c_str());
+        fout <<"            <Add option=\"" << safedef.str() << "\" />\n";
         }
       }
 
