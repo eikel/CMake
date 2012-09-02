@@ -413,6 +413,16 @@ void cmExtraCodeBlocksGenerator
     }
   fout<<"\" />\n";
   fout<<"      </VirtualTargets>\n";
+  // Make sure CMake is run as pre-build step.
+  const char* cmakeCommand = mf->GetRequiredDefinition("CMAKE_COMMAND");
+  fout<<"      <ExtraCommands>\n"
+        "         <Add before=\""
+      << cmakeCommand << " chdir " << mf->GetHomeOutputDirectory()
+      <<" &amp;&amp; "
+      << cmakeCommand << ' ' << mf->GetHomeDirectory() << "\" />\n"
+        "         <Mode after=\"always\" />\n"
+        "      </ExtraCommands>\n";
+
 
   // Collect all used source files in the project
   // Sort them into two containers, one for C/C++ implementation files
