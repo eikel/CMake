@@ -706,6 +706,29 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
         <<"         <Option type=\"" << 4 << "\" />\n";
     }
 
+  // Add link dependencies
+  const std::vector<std::string> & linkDeps =
+                                  target->GetLinkImplementation("")->Libraries;
+  if (!linkDeps.empty())
+    {
+    fout<<"         <Linker>\n";
+    for (std::vector<std::string>::const_iterator dep = linkDeps.begin();
+         dep != linkDeps.end(); ++dep)
+      {
+      cmTarget * depTarget =
+             const_cast<cmMakefile *>(makefile)->FindTargetToUse(dep->c_str());
+      if (depTarget)
+        {
+        const std::string fullPath = depTarget->GetFullPath();
+        const std::size_t lastSlash = fullPath.find_last_of('/');
+        fout<<"            <Add directory=\""
+            << fullPath.substr(0, lastSlash) <<"\" />\n";
+        }
+      fout<<"            <Add library=\""<< *dep <<"\" />\n";
+      }
+    fout<<"         </Linker>\n";
+    }
+
   fout<<"      </Target>\n";
 
 }
