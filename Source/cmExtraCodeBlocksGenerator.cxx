@@ -322,6 +322,7 @@ void cmExtraCodeBlocksGenerator
 
   this->AppendTarget(fout, "all", 0, make.c_str(), mf, compiler.c_str());
 
+  std::vector<std::string> virtualTargetDeps;
   // add all executable and library targets and some of the GLOBAL
   // and UTILITY targets
   for (std::vector<cmLocalGenerator*>::const_iterator lg=lgs.begin();
@@ -388,6 +389,7 @@ void cmExtraCodeBlocksGenerator
           {
           this->AppendTarget(fout, ti->first.c_str(), &ti->second,
                              make.c_str(), makefile, compiler.c_str());
+          virtualTargetDeps.push_back(ti->first);
           std::string fastTarget = ti->first;
           fastTarget += "/fast";
           this->AppendTarget(fout, fastTarget.c_str(), &ti->second,
@@ -402,6 +404,15 @@ void cmExtraCodeBlocksGenerator
 
   fout<<"      </Build>\n";
 
+  fout<<"      <VirtualTargets>\n";
+  fout<<"         <Add alias=\"All\" targets=\"";
+  for (std::vector<std::string>::const_iterator dep=virtualTargetDeps.begin();
+       dep!=virtualTargetDeps.end(); ++dep)
+    {
+    fout<< *dep <<';';
+    }
+  fout<<"\" />\n";
+  fout<<"      </VirtualTargets>\n";
 
   // Collect all used source files in the project
   // Sort them into two containers, one for C/C++ implementation files
