@@ -320,8 +320,6 @@ void cmExtraCodeBlocksGenerator
         "      "<<virtualFolders<<"\n"
         "      <Build>\n";
 
-  this->AppendTarget(fout, "all", 0, make.c_str(), mf, compiler.c_str());
-
   std::vector<std::string> virtualTargetDeps;
   // add all executable and library targets and some of the GLOBAL
   // and UTILITY targets
@@ -335,38 +333,6 @@ void cmExtraCodeBlocksGenerator
       {
       switch(ti->second.GetType())
         {
-        case cmTarget::GLOBAL_TARGET:
-          {
-          bool insertTarget = false;
-          // Only add the global targets from CMAKE_BINARY_DIR,
-          // not from the subdirs
-          if (strcmp(makefile->GetStartOutputDirectory(),
-                     makefile->GetHomeOutputDirectory())==0)
-            {
-            insertTarget = true;
-            // only add the "edit_cache" target if it's not ccmake, because
-            // this will not work within the IDE
-            if (ti->first == "edit_cache")
-              {
-              const char* editCommand = makefile->GetDefinition
-                                                        ("CMAKE_EDIT_COMMAND");
-              if (editCommand == 0)
-                {
-                insertTarget = false;
-                }
-              else if (strstr(editCommand, "ccmake")!=NULL)
-                {
-                insertTarget = false;
-                }
-              }
-            }
-          if (insertTarget)
-            {
-            this->AppendTarget(fout, ti->first.c_str(), 0,
-                               make.c_str(), makefile, compiler.c_str());
-            }
-          }
-          break;
         case cmTarget::UTILITY:
           // Add all utility targets, except the Nightly/Continuous/
           // Experimental-"sub"targets as e.g. NightlyStart
@@ -390,10 +356,6 @@ void cmExtraCodeBlocksGenerator
           this->AppendTarget(fout, ti->first.c_str(), &ti->second,
                              make.c_str(), makefile, compiler.c_str());
           virtualTargetDeps.push_back(ti->first);
-          std::string fastTarget = ti->first;
-          fastTarget += "/fast";
-          this->AppendTarget(fout, fastTarget.c_str(), &ti->second,
-                             make.c_str(), makefile, compiler.c_str());
           }
           break;
         default:
