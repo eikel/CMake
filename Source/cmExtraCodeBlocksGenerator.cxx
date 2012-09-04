@@ -706,21 +706,7 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
         <<"         <Option type=\"" << 4 << "\" />\n";
     }
 
-  fout<<"         <MakeCommands>\n"
-        "            <Build command=\""
-      << this->BuildMakeCommand(make, makefileName.c_str(), targetName)
-      << "\" />\n"
-        "            <CompileFile command=\""
-      << this->BuildMakeCommand(make, makefileName.c_str(),"&quot;$file&quot;")
-      << "\" />\n"
-        "            <Clean command=\""
-      << this->BuildMakeCommand(make, makefileName.c_str(), "clean")
-      << "\" />\n"
-        "            <DistClean command=\""
-      << this->BuildMakeCommand(make, makefileName.c_str(), "clean")
-      << "\" />\n"
-        "         </MakeCommands>\n"
-        "      </Target>\n";
+  fout<<"      </Target>\n";
 
 }
 
