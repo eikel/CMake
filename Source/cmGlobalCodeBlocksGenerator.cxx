@@ -398,7 +398,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
   // Collect all used source files in the project
   // Sort them into two containers, one for C/C++ implementation files
   // which may have an acompanying header, one for all other files
-  std::map<std::string, cmSourceFile *> cFiles;
+  std::map<std::string, std::deque<std::string> > cFiles;
   std::set<std::string> otherFiles;
   for (std::vector<cmLocalGenerator *>::const_iterator lg =
          localGenerators.begin();
@@ -449,7 +449,19 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
             // then put it accordingly into one of the two containers
             if (isCFile)
               {
-              cFiles[(*si)->GetFullPath()] = *si;
+                const std::string fullPath = (*si)->GetFullPath();
+                std::map<std::string, std::deque<std::string> >::iterator cfe =
+                                              cFiles.find(fullPath);
+                if (cfe != cFiles.end())
+                  {
+                  cfe->second.push_back(ti->first);
+                  }
+                else
+                  {
+                  std::deque<std::string> newTargets;
+                  newTargets.push_back(ti->first);
+                  cFiles.insert(std::make_pair(fullPath, newTargets));
+                  }
               }
             else
               {
@@ -469,7 +481,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
   // file exists. If it does, it is inserted into the map of files.
   // A very similar version of that code exists also in the kdevelop
   // project generator.
-  for (std::map<std::string, cmSourceFile *>::const_iterator
+  for (std::map<std::string, std::deque<std::string> >::const_iterator
        sit = cFiles.begin();
        sit != cFiles.end();
        ++sit)
@@ -504,13 +516,19 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
 
   // insert all source files in the CodeBlocks project
   // first the C/C++ implementation files, then all others
-  for (std::map<std::string, cmSourceFile *>::const_iterator
+  for (std::map<std::string, std::deque<std::string> >::const_iterator
        sit = cFiles.begin();
        sit != cFiles.end();
        ++sit)
     {
-    fout << "      <Unit filename=\"" << sit->first << "\">\n"
-    "      </Unit>\n";
+    fout<<"      <Unit filename=\""<< sit->first <<"\">\n";
+    for (std::deque<std::string>::const_iterator taIt = sit->second.begin();
+         taIt != sit->second.end();
+         ++taIt)
+      {
+      fout<<"         <Option target=\""<< *taIt <<"\" />\n";
+      }
+    fout<<"      </Unit>\n";
     }
   for (std::set<std::string>::const_iterator
        sit = otherFiles.begin();
