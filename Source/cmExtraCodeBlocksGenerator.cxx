@@ -633,6 +633,20 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
         fout <<"            <Add option=\"-D" << safedef.str() << "\" />\n";
         }
       }
+    // the compilerdefines for this target
+    const char* cdefs2 = target->GetProperty("COMPILE_DEFINITIONS");
+    if(cdefs2)
+      {
+      // Expand the list.
+      std::vector<std::string> defs;
+      cmSystemTools::ExpandListArgument(cdefs2, defs);
+      for(std::vector<std::string>::const_iterator di = defs.begin();
+          di != defs.end(); ++di)
+        {
+        cmXMLSafe safedef(di->c_str());
+        fout <<"            <Add option=\"-D" << safedef.str() << "\" />\n";
+        }
+      }
     const char* cflags = target->GetProperty("COMPILE_FLAGS");
     if(cflags)
       {
