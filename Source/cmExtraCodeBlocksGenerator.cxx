@@ -747,6 +747,7 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
     for (std::vector<std::string>::const_iterator dep = linkDeps.begin();
          dep != linkDeps.end(); ++dep)
       {
+      std::string depName = *dep;
       cmTarget * depTarget =
              const_cast<cmMakefile *>(makefile)->FindTargetToUse(dep->c_str());
       if (depTarget)
@@ -756,7 +757,11 @@ void cmExtraCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream& fout,
         fout<<"            <Add directory=\""
             << fullPath.substr(0, lastSlash) <<"\" />\n";
         }
-      fout<<"            <Add library=\""<< *dep <<"\" />\n";
+      if (depName.substr(0, 2) == "-l")
+        {
+          depName = depName.substr(2);
+        }
+      fout<<"            <Add library=\""<< depName <<"\" />\n";
       }
     fout<<"         </Linker>\n";
     }
