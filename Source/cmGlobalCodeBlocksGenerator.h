@@ -1,5 +1,7 @@
 /*============================================================================
   CMake - Cross Platform Makefile Generator
+  Copyright 2004-2009 Kitware, Inc.
+  Copyright 2004 Alexander Neundorf (neundorf@kde.org)
   Copyright 2012 Benjamin Eikel
 
   Distributed under the OSI-approved BSD License (the "License");
@@ -15,6 +17,8 @@
 
 #include "cmGlobalGenerator.h"
 #include "cmGlobalGeneratorFactory.h"
+
+class cmGeneratedFileStream;
 
 /** \class cmGlobalCodeBlocksGenerator
  * \brief Write a project for the Code::Blocks IDE
@@ -65,6 +69,26 @@ public:
    * requests that they Generate.
    */
   virtual void Generate();
+private:
+
+  void OutputCodeBlocksProject(
+    const std::vector<cmLocalGenerator *> & localGenerators);
+
+  void AppendTarget(cmGeneratedFileStream & fout,
+                    const char * targetName,
+                    cmTarget * target,
+                    const char * make,
+                    const cmMakefile * makefile,
+                    const char * compiler);
+
+  ///! Write a dummy file for OBJECT libraries for Code::Blocks to reference
+  std::string CreateDummyTargetFile(cmMakefile * mf, cmTarget * target) const;
+
+  ///! Translate the cmake compiler id into the Code::Blocks compiler id
+  std::string GetCodeBlocksCompilerId(const cmMakefile * mf) const;
+
+  ///! Translate the type of the cmake target into an Code::Blocks target id
+  int GetCodeBlocksTargetType(cmTarget * target) const;
 };
 
 #endif
