@@ -76,6 +76,7 @@
 #  include "cmWin32ProcessExecution.h"
 #else
 #endif
+#include "cmGlobalCodeBlocksGenerator.h"
 #include "cmGlobalUnixMakefileGenerator3.h"
 #include "cmGlobalNinjaGenerator.h"
 
@@ -2605,6 +2606,8 @@ void cmake::AddDefaultGenerators()
     cmGlobalUnixMakefileGenerator3::NewFactory());
   this->Generators.push_back(
     cmGlobalNinjaGenerator::NewFactory());
+  this->Generators.push_back(
+    cmGlobalCodeBlocksGenerator::NewFactory());
 #ifdef CMAKE_USE_XCODE
   this->Generators.push_back(
     cmGlobalXCodeGenerator::NewFactory());

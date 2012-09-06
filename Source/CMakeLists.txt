@@ -375,6 +375,13 @@ set(SRCS ${SRCS}
   cmNinjaUtilityTargetGenerator.cxx
   cmNinjaUtilityTargetGenerator.h
   )
+
+# Code::Blocks support
+set(SRCS ${SRCS}
+  cmGlobalCodeBlocksGenerator.cxx
+  cmGlobalCodeBlocksGenerator.h
+  )
+
 if(WIN32 AND NOT CYGWIN AND NOT BORLAND)
   set_source_files_properties(cmcldeps.cxx PROPERTIES COMPILE_DEFINITIONS _WIN32_WINNT=0x0501)
   add_executable(cmcldeps cmcldeps.cxx)
