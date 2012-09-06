@@ -163,7 +163,7 @@ void CBTree::BuildUnitImpl(std::string & unitString,
 
 cmGlobalCodeBlocksGenerator::cmGlobalCodeBlocksGenerator()
 {
-  this->FindMakeProgramFile = "CMakeFindCodeBlocks.cmake";
+  this->FindMakeProgramFile = "CMakeCodeBlocksFindMake.cmake";
 }
 
 cmGlobalCodeBlocksGenerator::~cmGlobalCodeBlocksGenerator()
