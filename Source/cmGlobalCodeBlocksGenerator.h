@@ -51,6 +51,14 @@ public:
   ///! Get the documentation entry for this generator.
   static void GetDocumentation(cmDocumentationEntry& entry);
 
+  virtual std::string GenerateBuildCommand(const char * makeProgram,
+                                           const char * projectName,
+                                           const char * additionalOptions,
+                                           const char * targetName,
+                                           const char * config,
+                                           bool ignoreErrors,
+                                           bool fast);
+
   /**
    * Generate the all required files for building this project/tree. This
    * basically creates a series of LocalGenerators for each directory and
