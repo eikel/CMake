@@ -336,6 +336,19 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
   "      " << virtualFolders << "\n"
   "      <Build>\n";
 
+  // Add a target for running CMake
+  const char * cmakeCommand = makefile->GetRequiredDefinition("CMAKE_COMMAND");
+  fout << "      <Target title=\"rebuild_cache\">\n"
+  "         <Option type=\"4\" />\n" // commands only target
+  "         <ExtraCommands>\n"
+  "            <Add before=\"" << cmakeCommand << " chdir " <<
+  makefile->GetHomeOutputDirectory() <<
+  " &amp;&amp; " <<
+  cmakeCommand << ' ' << makefile->GetHomeDirectory() << "\" />\n"
+  "            <Mode after=\"always\" />\n"
+  "         </ExtraCommands>\n"
+  "      </Target>\n";
+
   std::vector<std::string> virtualTargetDeps;
   // add all executable and library targets and some of the GLOBAL
   // and UTILITY targets
