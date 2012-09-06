@@ -331,7 +331,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
   "   <FileVersion major=\"1\" minor=\"6\" />\n"
   "   <Project>\n"
   "      <Option title=\"" << makefile->GetProjectName() << "\" />\n"
-        "      <Option makefile_is_custom=\"0\" />\n"
+  "      <Option makefile_is_custom=\"0\" />\n"
   "      <Option compiler=\"" << compiler << "\" />\n"
   "      " << virtualFolders << "\n"
   "      <Build>\n";
@@ -385,15 +385,15 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
 
   fout << "      </Build>\n";
 
-  fout<<"      <VirtualTargets>\n";
-  fout<<"         <Add alias=\"All\" targets=\"";
-  for (std::vector<std::string>::const_iterator dep=virtualTargetDeps.begin();
-       dep!=virtualTargetDeps.end(); ++dep)
+  fout << "      <VirtualTargets>\n";
+  fout << "         <Add alias=\"All\" targets=\"";
+  std::vector<std::string>::const_iterator dep;
+  for (dep = virtualTargetDeps.begin(); dep != virtualTargetDeps.end(); ++dep)
     {
-    fout<< *dep <<';';
+    fout << *dep << ';';
     }
-  fout<<"\" />\n";
-  fout<<"      </VirtualTargets>\n";
+  fout << "\" />\n";
+  fout << "      </VirtualTargets>\n";
 
   // Collect all used source files in the project
   // Sort them into two containers, one for C/C++ implementation files
@@ -449,19 +449,19 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
             // then put it accordingly into one of the two containers
             if (isCFile)
               {
-                const std::string fullPath = (*si)->GetFullPath();
-                std::map<std::string, std::deque<std::string> >::iterator cfe =
-                                              cFiles.find(fullPath);
-                if (cfe != cFiles.end())
-                  {
-                  cfe->second.push_back(ti->first);
-                  }
-                else
-                  {
-                  std::deque<std::string> newTargets;
-                  newTargets.push_back(ti->first);
-                  cFiles.insert(std::make_pair(fullPath, newTargets));
-                  }
+              const std::string fullPath = (*si)->GetFullPath();
+              std::map<std::string, std::deque<std::string> >::iterator cfe =
+                cFiles.find(fullPath);
+              if (cfe != cFiles.end())
+                {
+                cfe->second.push_back(ti->first);
+                }
+              else
+                {
+                std::deque<std::string> newTargets;
+                newTargets.push_back(ti->first);
+                cFiles.insert(std::make_pair(fullPath, newTargets));
+                }
               }
             else
               {
@@ -521,14 +521,14 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
        sit != cFiles.end();
        ++sit)
     {
-    fout<<"      <Unit filename=\""<< sit->first <<"\">\n";
+    fout << "      <Unit filename=\"" << sit->first << "\">\n";
     for (std::deque<std::string>::const_iterator taIt = sit->second.begin();
          taIt != sit->second.end();
          ++taIt)
       {
-      fout<<"         <Option target=\""<< *taIt <<"\" />\n";
+      fout << "         <Option target=\"" << *taIt << "\" />\n";
       }
-    fout<<"      </Unit>\n";
+    fout << "      </Unit>\n";
     }
   for (std::set<std::string>::const_iterator
        sit = otherFiles.begin();
@@ -619,50 +619,50 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
         }
       }
     // the compilerdefines for this target
-    const char* cdefs2 = target->GetProperty("COMPILE_DEFINITIONS");
-    if(cdefs2)
+    const char * cdefs2 = target->GetProperty("COMPILE_DEFINITIONS");
+    if (cdefs2)
       {
       // Expand the list.
       std::vector<std::string> defs;
       cmSystemTools::ExpandListArgument(cdefs2, defs);
-      for(std::vector<std::string>::const_iterator di = defs.begin();
-          di != defs.end(); ++di)
+      for (std::vector<std::string>::const_iterator di = defs.begin();
+           di != defs.end(); ++di)
         {
         cmXMLSafe safedef(di->c_str());
-        fout <<"            <Add option=\"-D" << safedef.str() << "\" />\n";
+        fout << "            <Add option=\"-D" << safedef.str() << "\" />\n";
         }
       }
-    const char* cflags = target->GetProperty("COMPILE_FLAGS");
-    if(cflags)
+    const char * cflags = target->GetProperty("COMPILE_FLAGS");
+    if (cflags)
       {
-          // Expand the list.
+      // Expand the list.
       std::vector<std::string> flags;
       cmSystemTools::ExpandListArgument(cflags, flags);
-      for(std::vector<std::string>::const_iterator fi = flags.begin();
-          fi != flags.end(); ++fi)
+      for (std::vector<std::string>::const_iterator fi = flags.begin();
+           fi != flags.end(); ++fi)
         {
         cmXMLSafe safeflag(fi->c_str());
-        fout <<"            <Add option=\"" << safeflag.str() << "\" />\n";
+        fout << "            <Add option=\"" << safeflag.str() << "\" />\n";
         }
       }
 
     std::string sharedLibFlagsVar = "CMAKE_SHARED_LIBRARY_CXX_FLAGS";
-    if (this->GlobalGenerator->GetLanguageEnabled("CXX") == false)
+    if (this->GetLanguageEnabled("CXX") == false)
       {
-        sharedLibFlagsVar = "CMAKE_SHARED_LIBRARY_C_FLAGS";
+      sharedLibFlagsVar = "CMAKE_SHARED_LIBRARY_C_FLAGS";
       }
-    const char* sldefs = target->GetMakefile()->GetSafeDefinition(
-                                             "CMAKE_SHARED_LIBRARY_CXX_FLAGS");
-    if(sldefs)
+    const char * sldefs = target->GetMakefile()->GetSafeDefinition(
+      "CMAKE_SHARED_LIBRARY_CXX_FLAGS");
+    if (sldefs)
       {
       // Expand the list.
       std::vector<std::string> defs;
       cmSystemTools::ExpandListArgument(sldefs, defs);
-      for(std::vector<std::string>::const_iterator di = defs.begin();
-          di != defs.end(); ++di)
+      for (std::vector<std::string>::const_iterator di = defs.begin();
+           di != defs.end(); ++di)
         {
         cmXMLSafe safedef(di->c_str());
-        fout <<"            <Add option=\"" << safedef.str() << "\" />\n";
+        fout << "            <Add option=\"" << safedef.str() << "\" />\n";
         }
       }
 
@@ -725,33 +725,33 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
 
   // Add link dependencies
   const std::vector<std::string> & linkDeps =
-                                  target->GetLinkImplementation("")->Libraries;
+    target->GetLinkImplementation("")->Libraries;
   if (!linkDeps.empty())
     {
-    fout<<"         <Linker>\n";
+    fout << "         <Linker>\n";
     for (std::vector<std::string>::const_iterator dep = linkDeps.begin();
          dep != linkDeps.end(); ++dep)
       {
       std::string depName = *dep;
       cmTarget * depTarget =
-             const_cast<cmMakefile *>(makefile)->FindTargetToUse(dep->c_str());
+        const_cast<cmMakefile *>(makefile)->FindTargetToUse(dep->c_str());
       if (depTarget)
         {
         const std::string fullPath = depTarget->GetFullPath();
         const std::size_t lastSlash = fullPath.find_last_of('/');
-        fout<<"            <Add directory=\""
-            << fullPath.substr(0, lastSlash) <<"\" />\n";
+        fout << "            <Add directory=\"" <<
+        fullPath.substr(0, lastSlash) << "\" />\n";
         }
       if (depName.substr(0, 2) == "-l")
         {
-          depName = depName.substr(2);
+        depName = depName.substr(2);
         }
-      fout<<"            <Add library=\""<< depName <<"\" />\n";
+      fout << "            <Add library=\"" << depName << "\" />\n";
       }
-    fout<<"         </Linker>\n";
+    fout << "         </Linker>\n";
     }
 
-  fout<<"      </Target>\n";
+  fout << "      </Target>\n";
 
 }
 
