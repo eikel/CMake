@@ -266,6 +266,8 @@ CMAKE_CXX_SOURCES="\
   cmNinjaTargetGenerator \
   cmNinjaNormalTargetGenerator \
   cmNinjaUtilityTargetGenerator \
+  cmGlobalCodeBlocksGenerator \
+  cmXMLSafe \
 "
 
 if ${cmake_system_mingw}; then
@@ -277,6 +279,7 @@ fi
 
 CMAKE_C_SOURCES="\
   cmListFileLexer \
+  cm_utf8
   "
 
 if ${cmake_system_mingw}; then
