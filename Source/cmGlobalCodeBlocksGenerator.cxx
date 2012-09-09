@@ -737,8 +737,35 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
     }
 
   // Add link dependencies
-  const std::vector<std::string> & linkDeps =
-    target->GetLinkImplementation("")->Libraries;
+  std::vector<std::string> linkDeps;
+  const cmTarget::LinkImplementation * linkImplementation =
+    target->GetLinkImplementation("");
+  if (linkImplementation != NULL)
+    {
+    linkDeps.assign(linkImplementation->Libraries.begin(),
+                    linkImplementation->Libraries.end());
+    }
+  // Check for other targets and add
+  for (std::vector<std::string>::const_iterator dep =
+         linkImplementation->Libraries.begin();
+       dep != linkImplementation->Libraries.end(); ++dep)
+    {
+    cmTarget * depTarget =
+      const_cast<cmMakefile *>(makefile)->FindTargetToUse(dep->c_str());
+    if (!depTarget)
+      {
+      continue;
+      }
+    const cmTarget::LinkInterface * linkInterface =
+      depTarget->GetLinkInterface("");
+    if (linkInterface == NULL)
+      {
+      continue;
+      }
+    linkDeps.insert(linkDeps.end(),
+                    linkInterface->Libraries.begin(),
+                    linkInterface->Libraries.end());
+    }
   if (!linkDeps.empty())
     {
     fout << "         <Linker>\n";
