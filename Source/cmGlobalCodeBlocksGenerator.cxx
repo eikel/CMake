@@ -577,7 +577,7 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
   makefileName += "/Makefile";
 
   fout << "      <Target title=\"" << targetName << "\">\n";
-  if (target != 0)
+  if (target != NULL)
     {
     int cbTargetType = this->GetCodeBlocksTargetType(target);
     std::string workingDir = makefile->GetStartOutputDirectory();
@@ -690,7 +690,7 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
 
     std::vector<std::string> includes;
     target->GetMakefile()->GetLocalGenerator()->
-    GetIncludeDirectories(includes, target);
+    GetIncludeDirectories(includes, new cmGeneratorTarget(target));
     for (std::vector<std::string>::const_iterator dirIt = includes.begin();
          dirIt != includes.end();
          ++dirIt)
