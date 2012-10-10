@@ -198,12 +198,18 @@ std::string cmGlobalCodeBlocksGenerator::GenerateBuildCommand(
   std::string makeCommand =
     cmSystemTools::ConvertToOutputPath(makeProgram);
 
-  makeCommand += " --no-splash-screen";
+  if (makeCommand.find("codeblocks_con") == std::string::npos)
+    {
+    // Code::Blocks console application is not used.
+    // Add additional command line flags
+    std::cerr << " no console " << std::endl;
+    makeCommand += " --no-splash-screen";
 #if defined (_WIN32)
-  makeCommand += " --no-check-associations --no-dde";
+    makeCommand += " --no-check-associations --no-dde";
 #else
-  makeCommand += " --no-ipc";
+    makeCommand += " --no-ipc";
 #endif
+    }
 
   if (targetName != NULL)
     {

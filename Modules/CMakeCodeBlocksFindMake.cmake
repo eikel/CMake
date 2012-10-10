@@ -12,6 +12,6 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-find_program(CMAKE_MAKE_PROGRAM codeblocks
+find_program(CMAKE_MAKE_PROGRAM NAMES codeblocks_con codeblocks
              DOC "The executable of the Code::Blocks IDE")
 mark_as_advanced(CMAKE_MAKE_PROGRAM)
