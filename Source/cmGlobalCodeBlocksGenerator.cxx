@@ -382,7 +382,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
             break;
             }
 
-          this->AppendTarget(fout, ti->first.c_str(), 0,
+          this->AppendTarget(fout, ti->first.c_str(), &ti->second,
                              make.c_str(), makefile, compiler.c_str());
           break;
         case cmTarget::EXECUTABLE:
@@ -609,7 +609,7 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
       location = this->CreateDummyTargetFile(
         const_cast<cmMakefile *>(makefile), target);
       }
-    else
+    else if(target->GetType() != cmTarget::UTILITY)
       {
       location = target->GetLocation(buildType);
       }
