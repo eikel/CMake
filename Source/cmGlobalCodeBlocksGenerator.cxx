@@ -382,7 +382,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
             break;
             }
 
-          this->AppendTarget(fout, ti->first.c_str(), &ti->second,
+          this->AppendTarget(**lg, fout, ti->first.c_str(), &ti->second,
                              make.c_str(), makefile, compiler.c_str());
           break;
         case cmTarget::EXECUTABLE:
@@ -391,7 +391,7 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
         case cmTarget::MODULE_LIBRARY:
         case cmTarget::OBJECT_LIBRARY:
           {
-          this->AppendTarget(fout, ti->first.c_str(), &ti->second,
+          this->AppendTarget(**lg, fout, ti->first.c_str(), &ti->second,
                              make.c_str(), makefile, compiler.c_str());
           virtualTargetDeps.push_back(ti->first);
           }
@@ -566,12 +566,14 @@ void cmGlobalCodeBlocksGenerator::OutputCodeBlocksProject(
 }
 
 // Generate the xml code for one target.
-void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
-                                               const char * targetName,
-                                               cmTarget * target,
-                                               const char * make,
-                                               const cmMakefile * makefile,
-                                               const char * compiler)
+void cmGlobalCodeBlocksGenerator::AppendTarget(
+                                             cmLocalGenerator & localGenerator,
+                                             cmGeneratedFileStream & fout,
+                                             const char * targetName,
+                                             cmTarget * target,
+                                             const char * make,
+                                             const cmMakefile * makefile,
+                                             const char * compiler)
 {
   std::string makefileName = makefile->GetStartOutputDirectory();
   makefileName += "/Makefile";
@@ -650,6 +652,23 @@ void cmGlobalCodeBlocksGenerator::AppendTarget(cmGeneratedFileStream & fout,
         cmXMLSafe safedef(di->c_str());
         fout << "            <Add option=\"-D" << safedef.str() << "\" />\n";
         }
+      }
+
+    std::string linkLibs;
+    std::string flags;
+    std::string linkFlags;
+    std::string frameworkPath;
+    std::string linkPath;
+    localGenerator.GetTargetFlags(linkLibs,
+                                  flags,
+                                  linkFlags,
+                                  frameworkPath,
+                                  linkPath,
+                                  this->GetGeneratorTarget(target));
+
+    if (!flags.empty())
+      {
+        fout << "            <Add option=\"" << flags << "\" />\n";
       }
     const char * cflags = target->GetProperty("COMPILE_FLAGS");
     if (cflags)

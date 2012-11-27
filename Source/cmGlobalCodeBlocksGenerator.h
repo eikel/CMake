@@ -74,7 +74,8 @@ private:
   void OutputCodeBlocksProject(
     const std::vector<cmLocalGenerator *> & localGenerators);
 
-  void AppendTarget(cmGeneratedFileStream & fout,
+  void AppendTarget(cmLocalGenerator & localGenerator,
+                    cmGeneratedFileStream & fout,
                     const char * targetName,
                     cmTarget * target,
                     const char * make,
